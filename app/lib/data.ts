@@ -8,24 +8,21 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { createClient } from '@/app/utils/superbase';
 
 export async function fetchRevenue() {
-  try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
+  const supabase = await createClient();
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+  const { data, error } = await supabase
+    .from('revenue')
+    .select('*');
 
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
-
-    // console.log('Data fetch completed after 3 seconds.');
-
-    return data.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+  if (error) {
+    console.error('Error fetching revenue data:', error);
+    throw error;
   }
+  console.log(data)
+  return data;
 }
 
 export async function fetchLatestInvoices() {
